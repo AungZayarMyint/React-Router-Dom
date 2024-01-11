@@ -1,30 +1,15 @@
-import { Link } from "react-router-dom";
+import { Link, json, useLoaderData } from "react-router-dom";
+import User from "../components/User";
 
-const PRODUCTS = [
-  {
-    id: 1,
-    title: "Apple",
-    description: "apple from world",
-  },
-  {
-    id:2,
-    title:"Banana",
-    description: "banana from world",
-  },
-  {
-    id:3,
-    title:"Orange",
-    description: "Orange from world",
-  },
-];
 const Products = () => {
+  const PRODUCTS = useLoaderData();
   return (
     <>
-      {PRODUCTS.map((product)=>(
-        <Link to={`/product/${product.title}`}>
-          <div key={product.id} className="card">
-            <p className="title">{product.title}</p>
-            <p>{product.description}</p>
+      {PRODUCTS.map((product) => (
+        <Link to={`/product/${product.id}`} key={product.id}>
+          <div className="card">
+            <p>{product.title}</p>
+            <User userId={product.userId} />
           </div>
         </Link>
       ))}
@@ -33,3 +18,14 @@ const Products = () => {
 };
 
 export default Products;
+
+export const loader = async () => {
+  const response = await fetch("https://jsonplaceholder.typicode.com/posts");
+
+  if (!response.ok) {
+    throw json({ message: "post not found!!" },{status:404});
+  } else {
+    const products = await response.json();
+    return products;
+  }
+};
